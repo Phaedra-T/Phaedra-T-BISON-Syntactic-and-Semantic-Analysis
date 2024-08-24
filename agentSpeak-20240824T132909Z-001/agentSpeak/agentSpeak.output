@@ -1,0 +1,830 @@
+Grammar
+
+    0 $accept: agent $end
+
+    1 agent: beliefs plans
+
+    2 beliefs: ε
+    3        | beliefs belief
+
+    4 belief: predicate '.'
+    5       | error '?'
+
+    6 predicate: "Atom" '(' terms ')'
+
+    7 plans: ε
+    8      | plans plan
+
+    9 plan: trig_event ':' context "<-" body '.'
+
+   10 trig_event: '+' predicate
+   11           | '-' predicate
+   12           | '+' goal
+   13           | '-' goal
+
+   14 context: "true"
+   15        | cliterals
+
+   16 cliterals: literal
+   17          | literal '&' cliterals
+
+   18 literal: predicate
+   19        | "not" '(' predicate ')'
+   20        | boolExpr
+
+   21 goal: '!' predicate
+   22     | '?' predicate
+
+   23 body: "true"
+   24     | actions
+
+   25 actions: action
+   26        | action ';' actions
+
+   27 action: predicate
+   28       | goal
+   29       | belief_update
+
+   30 belief_update: '+' predicate
+   31              | '-' predicate
+
+   32 terms: term
+   33      | term ',' terms
+
+   34 term: "Var"
+   35     | "Atom"
+   36     | "Number"
+   37     | "Atom" '(' terms ')'
+
+   38 boolExpr: boolE
+   39         | boolExpr '|' boolE
+
+   40 boolE: boolarg relOp boolarg
+
+   41 boolarg: "Number"
+   42        | "Var"
+
+   43 relOp: '>'
+   44      | '<'
+   45      | '='
+   46      | ">="
+   47      | "=<"
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '!' (33) 21
+    '&' (38) 17
+    '(' (40) 6 19 37
+    ')' (41) 6 19 37
+    '+' (43) 10 12 30
+    ',' (44) 33
+    '-' (45) 11 13 31
+    '.' (46) 4 9
+    ':' (58) 9
+    ';' (59) 26
+    '<' (60) 44
+    '=' (61) 45
+    '>' (62) 43
+    '?' (63) 5 22
+    '|' (124) 39
+    error (256) 5
+    "<-" (258) 9
+    ">=" (259) 46
+    "=<" (260) 47
+    "true" (261) 14 23
+    "not" (262) 19
+    "Var" (263) 34 42
+    "Atom" (264) 6 35 37
+    "Number" (265) 36 41
+
+
+Nonterminals, with rules where they appear
+
+    $accept (26)
+        on left: 0
+    agent (27)
+        on left: 1
+        on right: 0
+    beliefs (28)
+        on left: 2 3
+        on right: 1 3
+    belief (29)
+        on left: 4 5
+        on right: 3
+    predicate (30)
+        on left: 6
+        on right: 4 10 11 18 19 21 22 27 30 31
+    plans (31)
+        on left: 7 8
+        on right: 1 8
+    plan (32)
+        on left: 9
+        on right: 8
+    trig_event (33)
+        on left: 10 11 12 13
+        on right: 9
+    context (34)
+        on left: 14 15
+        on right: 9
+    cliterals (35)
+        on left: 16 17
+        on right: 15 17
+    literal (36)
+        on left: 18 19 20
+        on right: 16 17
+    goal (37)
+        on left: 21 22
+        on right: 12 13 28
+    body (38)
+        on left: 23 24
+        on right: 9
+    actions (39)
+        on left: 25 26
+        on right: 24 26
+    action (40)
+        on left: 27 28 29
+        on right: 25 26
+    belief_update (41)
+        on left: 30 31
+        on right: 29
+    terms (42)
+        on left: 32 33
+        on right: 6 33 37
+    term (43)
+        on left: 34 35 36 37
+        on right: 32 33
+    boolExpr (44)
+        on left: 38 39
+        on right: 20 39
+    boolE (45)
+        on left: 40
+        on right: 38 39
+    boolarg (46)
+        on left: 41 42
+        on right: 40
+    relOp (47)
+        on left: 43 44 45 46 47
+        on right: 40
+
+
+State 0
+
+    0 $accept: • agent $end
+
+    $default  reduce using rule 2 (beliefs)
+
+    agent    go to state 1
+    beliefs  go to state 2
+
+
+State 1
+
+    0 $accept: agent • $end
+
+    $end  shift, and go to state 3
+
+
+State 2
+
+    1 agent: beliefs • plans
+    3 beliefs: beliefs • belief
+
+    error   shift, and go to state 4
+    "Atom"  shift, and go to state 5
+
+    $end  reduce using rule 7 (plans)
+    '+'   reduce using rule 7 (plans)
+    '-'   reduce using rule 7 (plans)
+
+    belief     go to state 6
+    predicate  go to state 7
+    plans      go to state 8
+
+
+State 3
+
+    0 $accept: agent $end •
+
+    $default  accept
+
+
+State 4
+
+    5 belief: error • '?'
+
+    '?'  shift, and go to state 9
+
+
+State 5
+
+    6 predicate: "Atom" • '(' terms ')'
+
+    '('  shift, and go to state 10
+
+
+State 6
+
+    3 beliefs: beliefs belief •
+
+    $default  reduce using rule 3 (beliefs)
+
+
+State 7
+
+    4 belief: predicate • '.'
+
+    '.'  shift, and go to state 11
+
+
+State 8
+
+    1 agent: beliefs plans •
+    8 plans: plans • plan
+
+    '+'  shift, and go to state 12
+    '-'  shift, and go to state 13
+
+    $default  reduce using rule 1 (agent)
+
+    plan        go to state 14
+    trig_event  go to state 15
+
+
+State 9
+
+    5 belief: error '?' •
+
+    $default  reduce using rule 5 (belief)
+
+
+State 10
+
+    6 predicate: "Atom" '(' • terms ')'
+
+    "Var"     shift, and go to state 16
+    "Atom"    shift, and go to state 17
+    "Number"  shift, and go to state 18
+
+    terms  go to state 19
+    term   go to state 20
+
+
+State 11
+
+    4 belief: predicate '.' •
+
+    $default  reduce using rule 4 (belief)
+
+
+State 12
+
+   10 trig_event: '+' • predicate
+   12           | '+' • goal
+
+    '!'     shift, and go to state 21
+    '?'     shift, and go to state 22
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 23
+    goal       go to state 24
+
+
+State 13
+
+   11 trig_event: '-' • predicate
+   13           | '-' • goal
+
+    '!'     shift, and go to state 21
+    '?'     shift, and go to state 22
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 25
+    goal       go to state 26
+
+
+State 14
+
+    8 plans: plans plan •
+
+    $default  reduce using rule 8 (plans)
+
+
+State 15
+
+    9 plan: trig_event • ':' context "<-" body '.'
+
+    ':'  shift, and go to state 27
+
+
+State 16
+
+   34 term: "Var" •
+
+    $default  reduce using rule 34 (term)
+
+
+State 17
+
+   35 term: "Atom" •
+   37     | "Atom" • '(' terms ')'
+
+    '('  shift, and go to state 28
+
+    $default  reduce using rule 35 (term)
+
+
+State 18
+
+   36 term: "Number" •
+
+    $default  reduce using rule 36 (term)
+
+
+State 19
+
+    6 predicate: "Atom" '(' terms • ')'
+
+    ')'  shift, and go to state 29
+
+
+State 20
+
+   32 terms: term •
+   33      | term • ',' terms
+
+    ','  shift, and go to state 30
+
+    $default  reduce using rule 32 (terms)
+
+
+State 21
+
+   21 goal: '!' • predicate
+
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 31
+
+
+State 22
+
+   22 goal: '?' • predicate
+
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 32
+
+
+State 23
+
+   10 trig_event: '+' predicate •
+
+    $default  reduce using rule 10 (trig_event)
+
+
+State 24
+
+   12 trig_event: '+' goal •
+
+    $default  reduce using rule 12 (trig_event)
+
+
+State 25
+
+   11 trig_event: '-' predicate •
+
+    $default  reduce using rule 11 (trig_event)
+
+
+State 26
+
+   13 trig_event: '-' goal •
+
+    $default  reduce using rule 13 (trig_event)
+
+
+State 27
+
+    9 plan: trig_event ':' • context "<-" body '.'
+
+    "true"    shift, and go to state 33
+    "not"     shift, and go to state 34
+    "Var"     shift, and go to state 35
+    "Atom"    shift, and go to state 5
+    "Number"  shift, and go to state 36
+
+    predicate  go to state 37
+    context    go to state 38
+    cliterals  go to state 39
+    literal    go to state 40
+    boolExpr   go to state 41
+    boolE      go to state 42
+    boolarg    go to state 43
+
+
+State 28
+
+   37 term: "Atom" '(' • terms ')'
+
+    "Var"     shift, and go to state 16
+    "Atom"    shift, and go to state 17
+    "Number"  shift, and go to state 18
+
+    terms  go to state 44
+    term   go to state 20
+
+
+State 29
+
+    6 predicate: "Atom" '(' terms ')' •
+
+    $default  reduce using rule 6 (predicate)
+
+
+State 30
+
+   33 terms: term ',' • terms
+
+    "Var"     shift, and go to state 16
+    "Atom"    shift, and go to state 17
+    "Number"  shift, and go to state 18
+
+    terms  go to state 45
+    term   go to state 20
+
+
+State 31
+
+   21 goal: '!' predicate •
+
+    $default  reduce using rule 21 (goal)
+
+
+State 32
+
+   22 goal: '?' predicate •
+
+    $default  reduce using rule 22 (goal)
+
+
+State 33
+
+   14 context: "true" •
+
+    $default  reduce using rule 14 (context)
+
+
+State 34
+
+   19 literal: "not" • '(' predicate ')'
+
+    '('  shift, and go to state 46
+
+
+State 35
+
+   42 boolarg: "Var" •
+
+    $default  reduce using rule 42 (boolarg)
+
+
+State 36
+
+   41 boolarg: "Number" •
+
+    $default  reduce using rule 41 (boolarg)
+
+
+State 37
+
+   18 literal: predicate •
+
+    $default  reduce using rule 18 (literal)
+
+
+State 38
+
+    9 plan: trig_event ':' context • "<-" body '.'
+
+    "<-"  shift, and go to state 47
+
+
+State 39
+
+   15 context: cliterals •
+
+    $default  reduce using rule 15 (context)
+
+
+State 40
+
+   16 cliterals: literal •
+   17          | literal • '&' cliterals
+
+    '&'  shift, and go to state 48
+
+    $default  reduce using rule 16 (cliterals)
+
+
+State 41
+
+   20 literal: boolExpr •
+   39 boolExpr: boolExpr • '|' boolE
+
+    '|'  shift, and go to state 49
+
+    $default  reduce using rule 20 (literal)
+
+
+State 42
+
+   38 boolExpr: boolE •
+
+    $default  reduce using rule 38 (boolExpr)
+
+
+State 43
+
+   40 boolE: boolarg • relOp boolarg
+
+    '='   shift, and go to state 50
+    '<'   shift, and go to state 51
+    '>'   shift, and go to state 52
+    ">="  shift, and go to state 53
+    "=<"  shift, and go to state 54
+
+    relOp  go to state 55
+
+
+State 44
+
+   37 term: "Atom" '(' terms • ')'
+
+    ')'  shift, and go to state 56
+
+
+State 45
+
+   33 terms: term ',' terms •
+
+    $default  reduce using rule 33 (terms)
+
+
+State 46
+
+   19 literal: "not" '(' • predicate ')'
+
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 57
+
+
+State 47
+
+    9 plan: trig_event ':' context "<-" • body '.'
+
+    '+'     shift, and go to state 58
+    '-'     shift, and go to state 59
+    '!'     shift, and go to state 21
+    '?'     shift, and go to state 22
+    "true"  shift, and go to state 60
+    "Atom"  shift, and go to state 5
+
+    predicate      go to state 61
+    goal           go to state 62
+    body           go to state 63
+    actions        go to state 64
+    action         go to state 65
+    belief_update  go to state 66
+
+
+State 48
+
+   17 cliterals: literal '&' • cliterals
+
+    "not"     shift, and go to state 34
+    "Var"     shift, and go to state 35
+    "Atom"    shift, and go to state 5
+    "Number"  shift, and go to state 36
+
+    predicate  go to state 37
+    cliterals  go to state 67
+    literal    go to state 40
+    boolExpr   go to state 41
+    boolE      go to state 42
+    boolarg    go to state 43
+
+
+State 49
+
+   39 boolExpr: boolExpr '|' • boolE
+
+    "Var"     shift, and go to state 35
+    "Number"  shift, and go to state 36
+
+    boolE    go to state 68
+    boolarg  go to state 43
+
+
+State 50
+
+   45 relOp: '=' •
+
+    $default  reduce using rule 45 (relOp)
+
+
+State 51
+
+   44 relOp: '<' •
+
+    $default  reduce using rule 44 (relOp)
+
+
+State 52
+
+   43 relOp: '>' •
+
+    $default  reduce using rule 43 (relOp)
+
+
+State 53
+
+   46 relOp: ">=" •
+
+    $default  reduce using rule 46 (relOp)
+
+
+State 54
+
+   47 relOp: "=<" •
+
+    $default  reduce using rule 47 (relOp)
+
+
+State 55
+
+   40 boolE: boolarg relOp • boolarg
+
+    "Var"     shift, and go to state 35
+    "Number"  shift, and go to state 36
+
+    boolarg  go to state 69
+
+
+State 56
+
+   37 term: "Atom" '(' terms ')' •
+
+    $default  reduce using rule 37 (term)
+
+
+State 57
+
+   19 literal: "not" '(' predicate • ')'
+
+    ')'  shift, and go to state 70
+
+
+State 58
+
+   30 belief_update: '+' • predicate
+
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 71
+
+
+State 59
+
+   31 belief_update: '-' • predicate
+
+    "Atom"  shift, and go to state 5
+
+    predicate  go to state 72
+
+
+State 60
+
+   23 body: "true" •
+
+    $default  reduce using rule 23 (body)
+
+
+State 61
+
+   27 action: predicate •
+
+    $default  reduce using rule 27 (action)
+
+
+State 62
+
+   28 action: goal •
+
+    $default  reduce using rule 28 (action)
+
+
+State 63
+
+    9 plan: trig_event ':' context "<-" body • '.'
+
+    '.'  shift, and go to state 73
+
+
+State 64
+
+   24 body: actions •
+
+    $default  reduce using rule 24 (body)
+
+
+State 65
+
+   25 actions: action •
+   26        | action • ';' actions
+
+    ';'  shift, and go to state 74
+
+    $default  reduce using rule 25 (actions)
+
+
+State 66
+
+   29 action: belief_update •
+
+    $default  reduce using rule 29 (action)
+
+
+State 67
+
+   17 cliterals: literal '&' cliterals •
+
+    $default  reduce using rule 17 (cliterals)
+
+
+State 68
+
+   39 boolExpr: boolExpr '|' boolE •
+
+    $default  reduce using rule 39 (boolExpr)
+
+
+State 69
+
+   40 boolE: boolarg relOp boolarg •
+
+    $default  reduce using rule 40 (boolE)
+
+
+State 70
+
+   19 literal: "not" '(' predicate ')' •
+
+    $default  reduce using rule 19 (literal)
+
+
+State 71
+
+   30 belief_update: '+' predicate •
+
+    $default  reduce using rule 30 (belief_update)
+
+
+State 72
+
+   31 belief_update: '-' predicate •
+
+    $default  reduce using rule 31 (belief_update)
+
+
+State 73
+
+    9 plan: trig_event ':' context "<-" body '.' •
+
+    $default  reduce using rule 9 (plan)
+
+
+State 74
+
+   26 actions: action ';' • actions
+
+    '+'     shift, and go to state 58
+    '-'     shift, and go to state 59
+    '!'     shift, and go to state 21
+    '?'     shift, and go to state 22
+    "Atom"  shift, and go to state 5
+
+    predicate      go to state 61
+    goal           go to state 62
+    actions        go to state 75
+    action         go to state 65
+    belief_update  go to state 66
+
+
+State 75
+
+   26 actions: action ';' actions •
+
+    $default  reduce using rule 26 (actions)
